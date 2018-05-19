@@ -1,5 +1,5 @@
 .data 
-    intArray: .word 100:3
+    intArray: .word 100:3 # another way to initialize an array
     myArray: .space 12   # Aloca espaco na memoria RAM
     newLine: .asciiz "\n"
 
