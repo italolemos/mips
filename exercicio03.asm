@@ -1,11 +1,12 @@
 .data
     file:    .asciiz "string.in"
-    fileOut: .asciiz "string.txt"
+    fileOut: .asciiz "string.out"
     buffer:  .space 1024
     endFile: .asciiz "\r"
     endLine: .asciiz "\n"
     bigger_word: .space 1024
     smaller_word: .space 1024
+    final_word: .space 1024
     maior: .word 0
     menor: .word 0
     
