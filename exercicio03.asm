@@ -45,9 +45,9 @@
  	la $a1, buffer     # endereco do buffer (copia do conteudo do arquivo)
  		
         # close file
-        #li $v0, 16
-        #add $a0, $s0, $s0 
-        #syscall 
+        li $v0, 16
+        add $a0, $s0, $s0 
+        syscall 
         
         addi $t8, $zero, 0   # controle para ler a primeira palavra
         
@@ -91,40 +91,52 @@ end_of_file:
     beq $a2, $t0, concatenaPalavraAtualComMaior
     bgt $t0, $a2, sobrescreveMaiorPalavra
     
-     #print menor palavra
-     li $v0, 4
-     la $a0, smaller_word
-     syscall
+    #print menor palavra
+    li $v0, 4
+    la $a0, smaller_word
+    syscall
      
-     #print maior palavra
-     li $v0, 4
-     la $a0, bigger_word
-     syscall     
+    #print maior palavra
+    li $v0, 4
+    la $a0, bigger_word
+    syscall     
                    
-     # open a file
-     li $v0, 13         # open file code
-     la $a0, fileOut    # file name to open
-     li $a1, 1          # flag for read only 0 = read; 1 write/create; 9 write/create/append
-     li $a2, 0          # flag for ignore
-     syscall            # open a file (file descriptor returned in $v0) 
+    # open a file
+    li $v0, 13         # open file code
+    la $a0, fileOut    # file name to open
+    li $a1, 1          # flag for read only 0 = read; 1 write/create; 9 write/create/append
+    li $a2, 0          # flag for ignore
+    syscall            # open a file (file descriptor returned in $v0) 
+      
+    move $s6, $v0      # file descriptor
      
-     # move $s6, $v0
+    # write file first address
+    li $v0, 15
+    move $a0, $s6   # move fd
+    la $a1, smaller_word
+    li $a2, 1024
+    syscall
      
-     # write file
-     li $v0, 15
-     move $a0, $v0
+    # write file break line
+    li $v0, 15
+    move $a0, $s6   # move fd
+    la $a1, endLine
+    li $a2, 4
+    syscall
      
-     la $a1, smaller_word
-     la $a2, str_data_end
-     la $a3, bigger_word
-     subu $a2, $a2, $a3
-     syscall
+    # write file second address
+    li $v0, 15
+    move $a0, $s6   # move fd
+    la $a1, bigger_word
+    li $a2, 1024
+    syscall
      
-     #close
-     li $v0, 16
-     # move $a0, $s6
-     syscall
      
+    #close
+    li $v0, 16
+    move $a0, $s6
+    syscall
+    
 exit:
      li $v0, 10
       # la $a0, ($t1)
@@ -155,7 +167,7 @@ copy_first_word:
     
 concatenaPalavraAtualComMenor:
     lb $t0, ($t3)        
-    # beqz $t0, fechaArquivo
+    beqz $t0, end_of_file
     beq $t0, $t2, readString
     sb $t0, ($s2)                  
     addi $t3, $t3, 1               
@@ -165,7 +177,7 @@ concatenaPalavraAtualComMenor:
     
 concatenaPalavraAtualComMaior:
     lb $t0, ($t3)
-    # beqz $t0, fechaArquivo
+    beqz $t0, end_of_file
     beq $t0, $t2, readString
     sb $t0, ($s3)                  
     addi $t3, $t3, 1               
