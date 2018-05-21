@@ -23,7 +23,7 @@
          
    
    countingWords:
-                lb $a0, 0,($t8)
+                lb $a0, word1($t8)
                 beqz $a0, printSize
                 addi $t1,$t1,1
                 addi $t4, $t4, 1
@@ -34,23 +34,9 @@
             li $v0, 1
             move $a0, $t4
             syscall
-readString:
-     # $a0 contém o buffer
-     li $t0, 0  # contador da palavra
-     li $t3, 0  #
-     loop:
-         #lb $t1, 0($a1)     # carregar o caracter atual
-         beq $t1, $t2, exit
-         
-         addi $t0, $t0, 1   # incrementa o contador index
-         
-         #print atual byte
-         #li $v0, 11
-         #la $a0, ($t1)
-         #syscall
-            
-         j loop
-     exit:
-         li $v0, 10
-         la $a0, ($t1)
-         syscall
+ 
+  loop:
+      lb $t1, 0($a1)
+      
+      
+      j loop
