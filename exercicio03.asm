@@ -1,11 +1,12 @@
 .data
     file:    .asciiz "string.in"
-    fileOut: .asciiz "string.txt"
+    fileOut: .asciiz "string.out"
     buffer:  .space 1024
     endFile: .asciiz "\r"
     endLine: .asciiz "\n"
     bigger_word: .space 1024
     smaller_word: .space 1024
+    final_word: .space 1024
     maior: .word 0
     menor: .word 0
     
@@ -107,22 +108,34 @@ end_of_file:
      li $a1, 1          # flag for read only 0 = read; 1 write/create; 9 write/create/append
      li $a2, 0          # flag for ignore
      syscall            # open a file (file descriptor returned in $v0) 
+      
+     move $s6, $v0      # file descriptor
      
-     # move $s6, $v0
-     
-     # write file
+     # write file first address
      li $v0, 15
-     move $a0, $v0
-     
+     move $a0, $s6   # move fd
      la $a1, smaller_word
-     la $a2, str_data_end
-     la $a3, bigger_word
-     subu $a2, $a2, $a3
+     li $a2, 1024
      syscall
+     
+     # write file break line
+     li $v0, 15
+     move $a0, $s6   # move fd
+     la $a1, endLine
+     li $a2, 4
+     syscall
+     
+     # write file second address
+     li $v0, 15
+     move $a0, $s6   # move fd
+     la $a1, bigger_word
+     li $a2, 1024
+     syscall
+     
      
      #close
      li $v0, 16
-     # move $a0, $s6
+     move $a0, $s6
      syscall
      
 exit:
